@@ -1,3 +1,5 @@
+use std::time::{SystemTime, UNIX_EPOCH};
+
 use serde::Serialize;
 use wayland_client::{protocol::wl_registry, Connection, Dispatch, QueueHandle};
 
@@ -8,7 +10,9 @@ struct Global {
 }
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 struct Registry {
+    generation_timestamp: u64,
     globals: Vec<Global>,
 }
 
@@ -39,7 +43,15 @@ fn main() {
 
     let _registry = display.get_registry(&qh, ()).unwrap();
 
-    let mut registry = Registry { globals: vec![] };
+    let generation_timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_millis() as u64;
+
+    let mut registry = Registry {
+        generation_timestamp,
+        globals: vec![],
+    };
     event_queue.roundtrip(&mut registry).unwrap();
 
     println!("{}", serde_json::to_string_pretty(&registry).unwrap());
