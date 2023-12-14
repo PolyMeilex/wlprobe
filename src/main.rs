@@ -41,7 +41,7 @@ fn main() {
     let mut event_queue = conn.new_event_queue();
     let qh = event_queue.handle();
 
-    let _registry = display.get_registry(&qh, ()).unwrap();
+    let _registry = display.get_registry(&qh, ());
 
     let generation_timestamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
