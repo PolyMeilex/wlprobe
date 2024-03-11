@@ -54,5 +54,9 @@ fn main() {
     };
     event_queue.roundtrip(&mut registry).unwrap();
 
+    registry
+        .globals
+        .sort_by(|g1, g2| g1.interface.cmp(&g2.interface));
+
     println!("{}", serde_json::to_string_pretty(&registry).unwrap());
 }
