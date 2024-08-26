@@ -9,7 +9,7 @@ cargo run
 ```
 Install the binary on the system:
 ```sh
-cargo install --path .
+cargo install wlprobe
 
 wlprobe > output.json
 ```
