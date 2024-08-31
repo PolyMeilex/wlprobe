@@ -1,5 +1,5 @@
 use std::{
-    env, mem, process,
+    env, process,
     time::{SystemTime, UNIX_EPOCH},
 };
 
@@ -79,28 +79,22 @@ fn main() {
     };
     event_queue.roundtrip(&mut registry).unwrap();
 
-    registry
-        .globals
-        .sort_by(|g1, g2| g1.interface.cmp(&g2.interface));
+    registry.globals.sort_by(|g1, g2| {
+        g1.interface
+            .cmp(&g2.interface)
+            .then(g2.version.cmp(&g1.version))
+    });
 
     if unique {
-        let mut globals = Vec::new();
-        mem::swap(&mut registry.globals, &mut globals);
-        let mut iter = globals.drain(..);
-        if let Some(mut prev) = iter.next() {
-            for global in iter {
-                if global.interface == prev.interface {
-                    prev = Global {
-                        interface: global.interface,
-                        version: global.version.max(prev.version),
-                    };
-                } else {
-                    registry.globals.push(prev);
-                    prev = global;
-                }
+        let mut prev = String::new();
+        registry.globals.retain(|Global { interface, .. }| {
+            if interface == &prev {
+                false
+            } else {
+                prev = interface.clone();
+                true
             }
-            registry.globals.push(prev);
-        };
+        });
     }
 
     println!("{}", serde_json::to_string_pretty(&registry).unwrap());
