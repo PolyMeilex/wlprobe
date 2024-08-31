@@ -39,17 +39,17 @@ impl Dispatch<wl_registry::WlRegistry, ()> for Registry {
 
 fn main() {
     let mut args = env::args().skip(1);
-    let mut dedup = false;
+    let mut unique = false;
     if let Some(arg) = args.next() {
         if args.next().is_some() {
             eprintln!("Too many arguments");
             process::exit(1);
         }
         match arg.as_str() {
-            "--dedup" => dedup = true,
+            "--unique" => unique = true,
             "--help" => {
                 eprintln!(
-                    "Options:\n\t--dedup\tKeep only one global per interface (highest version)"
+                    "Options:\n\t--unique\tKeep only one global per interface (highest version)"
                 );
                 process::exit(0);
             }
@@ -83,7 +83,7 @@ fn main() {
         .globals
         .sort_by(|g1, g2| g1.interface.cmp(&g2.interface));
 
-    if dedup {
+    if unique {
         let mut globals = Vec::new();
         mem::swap(&mut registry.globals, &mut globals);
         let mut iter = globals.drain(..);
