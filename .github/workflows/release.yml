@@ -10,7 +10,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: cargo build --release
       - name: Release
         uses: softprops/action-gh-release@v2
