@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: cargo build --release
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: ubuntu-artifact
           path: target/release/wlprobe
